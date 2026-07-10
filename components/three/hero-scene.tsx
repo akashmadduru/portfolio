@@ -5,17 +5,16 @@ import {
   ContactShadows,
   Environment,
   Lightformer,
-  Resize,
   Sparkles,
 } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as React from "react";
-import type { Group } from "three";
+import * as THREE from "three";
 
 import {
   HeroModel,
   ModelErrorBoundary,
-  PlaceholderObject,
+  ProceduralDrone,
   REST_ROTATION,
   REST_SCALE,
   SCROLL_END_ROTATION,
@@ -30,16 +29,72 @@ interface SceneProps {
 }
 
 /* --------------------------------------------------------------------- */
-/*  Model rig — idle float + subtle spin (inner) and scroll-driven        */
-/*  rotation/scale + gentle mouse parallax (outer).                       */
+/*  AutoFit — frames ANY model to the canvas from its bounding sphere.    */
+/*  Recomputes camera distance once after load and on viewport resize     */
+/*  (never per frame), so the model always fills ~85% with even padding.  */
+/* --------------------------------------------------------------------- */
+const FitContext = React.createContext<() => void>(() => {});
+
+function AutoFit({
+  children,
+  fill = 0.85,
+}: {
+  children: React.ReactNode;
+  fill?: number;
+}) {
+  const group = React.useRef<THREE.Group>(null);
+  const { camera, size, invalidate } = useThree();
+  const [tick, setTick] = React.useState(0);
+  const requestFit = React.useCallback(() => setTick((n) => n + 1), []);
+
+  React.useLayoutEffect(() => {
+    const g = group.current;
+    if (!g || !(camera as THREE.PerspectiveCamera).isPerspectiveCamera) return;
+
+    const box = new THREE.Box3().setFromObject(g);
+    if (box.isEmpty()) return;
+    const radius = box.getBoundingSphere(new THREE.Sphere()).radius || 1;
+
+    const cam = camera as THREE.PerspectiveCamera;
+    const vFov = (cam.fov * Math.PI) / 180;
+    const aspect = size.width / Math.max(1, size.height);
+    const hHalf = Math.atan(Math.tan(vFov / 2) * aspect);
+    // Fit whichever axis binds, then back off for even padding.
+    const dist =
+      Math.max(radius / Math.sin(vFov / 2), radius / Math.sin(hHalf)) / fill;
+
+    cam.position.set(0, 0, dist);
+    cam.up.set(0, 1, 0);
+    cam.lookAt(0, 0, 0);
+    cam.near = Math.max(0.01, dist - radius * 2);
+    cam.far = dist + radius * 4;
+    cam.updateProjectionMatrix();
+    invalidate();
+  }, [tick, size.width, size.height, camera, fill, invalidate]);
+
+  return (
+    <FitContext.Provider value={requestFit}>
+      <group ref={group}>{children}</group>
+    </FitContext.Provider>
+  );
+}
+
+/** Re-triggers AutoFit once an async model finishes loading (inside Suspense). */
+function FitProbe() {
+  const requestFit = React.useContext(FitContext);
+  React.useLayoutEffect(() => {
+    requestFit();
+  }, [requestFit]);
+  return null;
+}
+
+/* --------------------------------------------------------------------- */
+/*  Model rig — still on load; scroll drives Y-rotation only + tiny zoom. */
 /* --------------------------------------------------------------------- */
 function ModelRig({ scrollProgress }: SceneProps) {
-  const outer = React.useRef<Group>(null);
-  const inner = React.useRef<Group>(null);
+  const outer = React.useRef<THREE.Group>(null);
+  const inner = React.useRef<THREE.Group>(null);
   const url = useResolvedModelUrl();
-
-  // End scale interpreted as a percentage zoom delta (negative = zoom out).
-  // e.g. SCROLL_END_SCALE_MULT = -3 → eases to 0.97× (subtle zoom-out).
   const endScale = REST_SCALE * (1 + SCROLL_END_SCALE_MULT / 100);
 
   useFrame((state) => {
@@ -47,58 +102,45 @@ function ModelRig({ scrollProgress }: SceneProps) {
     const t = state.clock.elapsedTime;
 
     if (inner.current) {
-      // Only a whisper of vertical float (~1–2px). NO automatic rotation.
-      inner.current.position.y = Math.sin(t * 0.5) * 0.012;
+      inner.current.position.y = Math.sin(t * 0.5) * 0.012; // ~1–2px float, no rotation
     }
 
     if (outer.current) {
       // Scroll-driven, Y-AXIS ONLY. X and Z stay fixed at the resting angle.
-      // Y eases from REST toward REST + 75° as you scroll; scrubbed + reversible.
       const targetY = REST_ROTATION[1] + p * SCROLL_END_ROTATION[1];
       outer.current.rotation.x = REST_ROTATION[0];
       outer.current.rotation.y = lerp(outer.current.rotation.y, targetY, 0.1);
       outer.current.rotation.z = REST_ROTATION[2];
 
       const target = lerp(REST_SCALE, endScale, p);
-      const s = lerp(outer.current.scale.x, target, 0.1);
-      outer.current.scale.setScalar(s);
+      outer.current.scale.setScalar(lerp(outer.current.scale.x, target, 0.1));
     }
   });
 
   return (
-    <group ref={outer} scale={REST_SCALE} rotation={REST_ROTATION}>
-      <Center>
+    <AutoFit fill={1.2}>
+      <group ref={outer} scale={REST_SCALE} rotation={REST_ROTATION}>
         <group ref={inner}>
-          {/* Resize normalizes any-sized glTF to ~1 unit so REST_SCALE is predictable. */}
-          <Resize>
-            <ModelErrorBoundary fallback={<PlaceholderObject />}>
-              <React.Suspense fallback={<PlaceholderObject />}>
-                {url ? <HeroModel url={url} /> : <PlaceholderObject />}
+          {/* drei <Center> centers the model's pivot at the origin via Box3, so
+              the scroll Y-rotation spins around the model's true center. */}
+          <Center>
+            <ModelErrorBoundary fallback={<ProceduralDrone />}>
+              <React.Suspense fallback={<ProceduralDrone />}>
+                {url ? (
+                  <>
+                    <HeroModel url={url} />
+                    <FitProbe />
+                  </>
+                ) : (
+                  <ProceduralDrone />
+                )}
               </React.Suspense>
             </ModelErrorBoundary>
-          </Resize>
+          </Center>
         </group>
-      </Center>
-    </group>
+      </group>
+    </AutoFit>
   );
-}
-
-/* --------------------------------------------------------------------- */
-/*  Camera — stable while idle; only a slight scroll-linked dolly.        */
-/* --------------------------------------------------------------------- */
-function CameraRig({ scrollProgress }: SceneProps) {
-  const { camera } = useThree();
-
-  useFrame(() => {
-    const p = clamp(scrollProgress.current, 0, 1);
-    // Stable, centered on the model at origin. Only a slight dolly-back on scroll.
-    camera.position.x = lerp(camera.position.x, 0, 0.08);
-    camera.position.y = lerp(camera.position.y, -p * 0.1, 0.08);
-    camera.position.z = lerp(camera.position.z, 6 + p * 0.8, 0.08);
-    camera.lookAt(0, -p * 0.04, 0);
-  });
-
-  return null;
 }
 
 /* --------------------------------------------------------------------- */
@@ -118,10 +160,8 @@ function StudioLighting() {
       >
         <orthographicCamera attach="shadow-camera" args={[-6, 6, 6, -6, 0.1, 30]} />
       </directionalLight>
-      {/* warm rim from behind */}
       <directionalLight position={[-6, 3, -5]} intensity={0.7} color="#ffcf9a" />
 
-      {/* HDR-equivalent reflections from soft light panels — no external fetch. */}
       <Environment resolution={256}>
         <Lightformer
           form="rect"
@@ -162,10 +202,8 @@ export function HeroScene({ scrollProgress }: SceneProps) {
   return (
     <>
       <StudioLighting />
-      <CameraRig scrollProgress={scrollProgress} />
       <ModelRig scrollProgress={scrollProgress} />
 
-      {/* Floating ambient dust — restrained, warm, GPU-cheap. */}
       <Sparkles
         count={34}
         scale={[9, 5, 5]}
@@ -177,11 +215,11 @@ export function HeroScene({ scrollProgress }: SceneProps) {
       />
 
       <ContactShadows
-        position={[0, -1.7, 0]}
-        opacity={0.55}
-        scale={14}
-        blur={2.8}
-        far={5}
+        position={[0, -0.85, 0]}
+        opacity={0.5}
+        scale={7}
+        blur={2.6}
+        far={3}
         resolution={512}
         color="#0a0806"
       />

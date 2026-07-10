@@ -1,47 +1,46 @@
 "use client";
 
-import { useGLTF } from "@react-three/drei";
+import { RoundedBox, useGLTF } from "@react-three/drei";
 import * as React from "react";
 import * as THREE from "three";
 
 /**
- * The project's existing glTF hero model. The file has been referenced as both
- * `/public/model/scene.gltf` and `/public/models/scene.gltf`, so we probe both
- * at runtime and use whichever exists. Do NOT swap for an external asset.
+ * Hero drone model.
+ *
+ * Drop an OPTIMIZED drone glTF/GLB into /public/models (see README for the
+ * gltf-transform + gltfpack + KTX2 pipeline) and it is loaded automatically.
+ * Until then, a lightweight PROCEDURAL drone (built from primitives, a few KB,
+ * near-zero GPU cost) is shown so the hero is never empty.
+ *
+ * NOTE: files in /public are served from the site ROOT — do NOT include
+ * "/public" in the URL. public/models/drone.glb → URL /models/drone.glb.
  */
-// NOTE: files in /public are served from the site ROOT — do NOT include "/public"
-// in the URL. The asset lives at public/models/geo/scene.gltf → URL /models/geo/scene.gltf.
 export const MODEL_CANDIDATES = [
-  "/models/geo/scene.gltf",
-  "/model/geo/scene.gltf",
-  "/models/scene.gltf",
-  "/model/scene.gltf",
+  "/models/drone.glb",
+  "/models/drone/scene.gltf",
+  "/models/drone.gltf",
 ] as const;
 export const MODEL_URL = MODEL_CANDIDATES[0];
 
 const DEG = Math.PI / 180;
 
 /** Resting orientation — tune for the model's most flattering angle. */
-export const REST_ROTATION: [number, number, number] = [0, -1, 0];
-/** Base scale after normalize-to-unit (Resize) + centering — tune to fit the hero.
- *  Reduced ~3× (was 3) so the model complements the hero copy rather than
- *  dominating it, leaving generous negative space. */
+export const REST_ROTATION: [number, number, number] = [0, 0, 0];
+/** Base scale after normalize-to-unit (Resize) + centering — tune to fit the hero. */
 export const REST_SCALE = 1;
 
 /** Scroll-end rotation DELTA — Y-AXIS ONLY (X and Z stay at REST_ROTATION). */
-export const SCROLL_END_ROTATION: [number, number, number] = [0, 75 * DEG, 0];
+export const SCROLL_END_ROTATION: [number, number, number] = [75 * DEG, 75 * DEG, 0];
 /**
- * Scroll-end scale as a PERCENTAGE zoom delta (negative = subtle zoom-out).
+ * Scroll-end scale as a PERCENTAGE zoom delta (negative = zoom out).
  * Consumed as `REST_SCALE * (1 + SCROLL_END_SCALE_MULT / 100)`.
- * -3 → eases to 0.97× while scrolling. (A raw negative *multiplier* would
- * mirror the mesh and invert its normals, so we treat it as a percentage.)
  */
 export const SCROLL_END_SCALE_MULT = 3;
 
 /**
  * Resolve which candidate path actually exists (HEAD probe). Returns `null`
- * until resolved, then the winning URL (or the first candidate as a last
- * resort, which will surface via the error boundary if truly missing).
+ * while probing, then the winning URL, or "" when no drone asset is present
+ * (→ the procedural drone is shown).
  */
 export function useResolvedModelUrl() {
   const [url, setUrl] = React.useState<string | null>(null);
@@ -60,7 +59,7 @@ export function useResolvedModelUrl() {
           // try next candidate
         }
       }
-      if (!cancelled) setUrl(MODEL_CANDIDATES[0]);
+      if (!cancelled) setUrl(""); // none found → procedural drone
     })();
     return () => {
       cancelled = true;
@@ -70,10 +69,14 @@ export function useResolvedModelUrl() {
   return url;
 }
 
+/**
+ * Loads an optimized glTF/GLB. drei's useGLTF wires DRACO + Meshopt decoders
+ * (and KTX2 via the renderer) automatically, so meshopt/KTX2-compressed assets
+ * from the optimization pipeline load without extra setup.
+ */
 export function HeroModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
 
-  // Clone once; enable shadows + crisp anisotropy for the studio lighting.
   const model = React.useMemo(() => {
     const clone = scene.clone(true);
     clone.traverse((obj) => {
@@ -93,11 +96,11 @@ export function HeroModel({ url }: { url: string }) {
   return <primitive object={model} />;
 }
 
-// No useGLTF.preload — the URL is resolved at runtime; <Suspense> + the error
+// No useGLTF.preload — URL is resolved at runtime; <Suspense> + the error
 // boundary below handle loading and any failure gracefully.
 
 /* --------------------------------------------------------------------- */
-/*  Error boundary: render a fallback if the model is missing/fails.      */
+/*  Error boundary: fall back to the procedural drone on load failure.    */
 /* --------------------------------------------------------------------- */
 interface BoundaryProps {
   fallback: React.ReactNode;
@@ -127,14 +130,143 @@ export class ModelErrorBoundary extends React.Component<
   }
 }
 
-/** Tactile machined placeholder shown until scene.gltf resolves. */
-export function PlaceholderObject() {
+/* --------------------------------------------------------------------- */
+/*  Procedural drone — clean futuristic quadcopter from primitives.       */
+/*  Anodized-aluminium body, matte polymer arms, amber signal accents.    */
+/*  Lightweight (~30 low-poly meshes), still (no auto motion).            */
+/* --------------------------------------------------------------------- */
+const ARMS: { x: number; z: number }[] = [
+  { x: 0.82, z: 0.6 },
+  { x: -0.82, z: 0.6 },
+  { x: 0.82, z: -0.6 },
+  { x: -0.82, z: -0.6 },
+];
+
+function Rotor({ x, z }: { x: number; z: number }) {
+  const angle = Math.atan2(z, x);
+  const length = Math.hypot(x, z);
   return (
     <group>
-      <mesh castShadow receiveShadow rotation={[0.4, 0.6, 0]}>
-        <torusKnotGeometry args={[0.75, 0.26, 40, 5]} />
-        <meshStandardMaterial color="#b9812f" metalness={0.85} roughness={0.28} />
+      {/* arm */}
+      <mesh
+        position={[x / 2, -0.02, z / 2]}
+        rotation={[0, -angle, 0]}
+        castShadow
+        receiveShadow
+      >
+        <boxGeometry args={[length, 0.055, 0.11]} />
+        <meshStandardMaterial color="#17181c" metalness={0.6} roughness={0.5} />
       </mesh>
+      {/* motor housing */}
+      <mesh position={[x, 0.02, z]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.12, 0.14, 0.2, 22]} />
+        <meshStandardMaterial color="#26292f" metalness={0.9} roughness={0.28} />
+      </mesh>
+      {/* amber cap */}
+      <mesh position={[x, 0.13, z]}>
+        <cylinderGeometry args={[0.11, 0.12, 0.03, 22]} />
+        <meshStandardMaterial
+          color="#ff8a3d"
+          emissive="#ff6a1f"
+          emissiveIntensity={0.9}
+          metalness={0.4}
+          roughness={0.4}
+          toneMapped={false}
+        />
+      </mesh>
+      {/* propeller — two crossed blades, static */}
+      <group position={[x, 0.17, z]} rotation={[0, angle, 0]}>
+        <mesh castShadow>
+          <boxGeometry args={[0.7, 0.012, 0.07]} />
+          <meshStandardMaterial
+            color="#0e0f13"
+            metalness={0.3}
+            roughness={0.6}
+            transparent
+            opacity={0.9}
+          />
+        </mesh>
+        <mesh rotation={[0, Math.PI / 2, 0]} castShadow>
+          <boxGeometry args={[0.7, 0.012, 0.07]} />
+          <meshStandardMaterial
+            color="#0e0f13"
+            metalness={0.3}
+            roughness={0.6}
+            transparent
+            opacity={0.9}
+          />
+        </mesh>
+      </group>
     </group>
   );
 }
+
+export function ProceduralDrone() {
+  return (
+    <group>
+      {/* central hull */}
+      <RoundedBox args={[1.5, 0.26, 1.0]} radius={0.1} smoothness={4} castShadow receiveShadow>
+        <meshStandardMaterial color="#2a2d33" metalness={0.92} roughness={0.3} />
+      </RoundedBox>
+      {/* upper deck */}
+      <RoundedBox
+        args={[1.0, 0.1, 0.66]}
+        radius={0.05}
+        smoothness={4}
+        position={[0, 0.17, -0.02]}
+        castShadow
+      >
+        <meshStandardMaterial color="#1c1e23" metalness={0.7} roughness={0.45} />
+      </RoundedBox>
+      {/* glossy canopy */}
+      <mesh position={[0, 0.16, 0.2]} scale={[0.46, 0.3, 0.5]} castShadow>
+        <sphereGeometry args={[0.5, 24, 20]} />
+        <meshStandardMaterial color="#0b0c10" metalness={0.2} roughness={0.06} />
+      </mesh>
+      {/* amber signal strip */}
+      <mesh position={[0, 0.05, 0.52]}>
+        <boxGeometry args={[0.5, 0.03, 0.03]} />
+        <meshStandardMaterial
+          color="#ff8a3d"
+          emissive="#ff6a1f"
+          emissiveIntensity={1}
+          toneMapped={false}
+        />
+      </mesh>
+
+      {/* gimbal camera under the nose */}
+      <mesh position={[0, -0.16, 0.4]} castShadow>
+        <sphereGeometry args={[0.14, 20, 20]} />
+        <meshStandardMaterial color="#101216" metalness={0.5} roughness={0.2} />
+      </mesh>
+      <mesh position={[0, -0.16, 0.5]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.07, 0.07, 0.04, 20]} />
+        <meshStandardMaterial color="#ffb27a" emissive="#ff6a1f" emissiveIntensity={0.7} toneMapped={false} />
+      </mesh>
+
+      {/* rotors */}
+      {ARMS.map((a) => (
+        <Rotor key={`${a.x}-${a.z}`} x={a.x} z={a.z} />
+      ))}
+
+      {/* landing skids */}
+      {[0.42, -0.42].map((z) => (
+        <group key={z}>
+          <mesh position={[0, -0.32, z]} castShadow receiveShadow>
+            <boxGeometry args={[1.1, 0.045, 0.05]} />
+            <meshStandardMaterial color="#17181c" metalness={0.6} roughness={0.5} />
+          </mesh>
+          {[0.42, -0.42].map((x) => (
+            <mesh key={x} position={[x, -0.2, z]} castShadow>
+              <boxGeometry args={[0.045, 0.22, 0.045]} />
+              <meshStandardMaterial color="#17181c" metalness={0.6} roughness={0.5} />
+            </mesh>
+          ))}
+        </group>
+      ))}
+    </group>
+  );
+}
+
+/** Back-compat alias: hero-scene renders this as the model / fallback. */
+export const PlaceholderObject = ProceduralDrone;
