@@ -30,12 +30,12 @@ export const REST_ROTATION: [number, number, number] = [0, 0, 0];
 export const REST_SCALE = 1;
 
 /** Scroll-end rotation DELTA — Y-AXIS ONLY (X and Z stay at REST_ROTATION). */
-export const SCROLL_END_ROTATION: [number, number, number] = [75 * DEG, 75 * DEG, 0];
+export const SCROLL_END_ROTATION: [number, number, number] = [0, 0, 0];
 /**
  * Scroll-end scale as a PERCENTAGE zoom delta (negative = zoom out).
  * Consumed as `REST_SCALE * (1 + SCROLL_END_SCALE_MULT / 100)`.
  */
-export const SCROLL_END_SCALE_MULT = 3;
+export const SCROLL_END_SCALE_MULT = 1;
 
 /**
  * Resolve which candidate path actually exists (HEAD probe). Returns `null`
