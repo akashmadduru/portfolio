@@ -83,7 +83,7 @@ export function About() {
             {profile.stats.map((stat, i) => (
               <Reveal key={stat.label} delay={i * 0.08}>
                 <Spotlight className="h-full rounded-2xl">
-                  <div className="flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-xl">
+                  <div className="panel flex h-full flex-col justify-between rounded-2xl p-5">
                     <span className="font-display text-4xl font-semibold text-gradient sm:text-5xl">
                       <CountUp value={stat.value} suffix={stat.suffix} />
                     </span>

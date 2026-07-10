@@ -16,7 +16,8 @@ export const profile = {
   resumeUrl: "/resume.pdf",
   location: contact.location,
   email: contact.email,
-  availability: "Open to senior & staff engineering roles",
+  // availability: "Open to senior & staff engineering roles",
+  availability: "",
   yearsExperience: "4.5+",
 
   /** Narrative intro (About section) — story, not a bio. */

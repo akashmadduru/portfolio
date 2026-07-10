@@ -14,7 +14,11 @@ export interface Project {
   techStack: string[];
   challenges: string[];
   results: ProjectMetric[];
-  /** Two CSS colors for the card/gallery gradient placeholder. */
+  /** Delivery timeline for the case study. */
+  timeline: string;
+  /** Business impact statement. */
+  impact: string;
+  /** Two CSS colors used to tint the art-directed project artwork. */
   gradient: [string, string];
   featured?: boolean;
   githubUrl: string; // TODO: replace with real repo
@@ -56,7 +60,10 @@ export const projects: Project[] = [
       { value: "RBAC", label: "Fine-grained access control" },
       { value: "24/7", label: "Production availability" },
     ],
-    gradient: ["#7c5cff", "#22d3ee"],
+    timeline: "8 months · 2023",
+    impact:
+      "Delivered compliant, fully auditable access control for a national-infrastructure airport program — trusted for round-the-clock operations.",
+    gradient: ["#c9962f", "#6f7bd6"],
     featured: true,
     githubUrl: "https://github.com/akashmadduru",
     liveUrl: "",
@@ -82,7 +89,10 @@ export const projects: Project[] = [
       { value: "<5ms", label: "Token verification" },
       { value: "SSO", label: "Across all services" },
     ],
-    gradient: ["#4f7cff", "#7c5cff"],
+    timeline: "6 months · 2023",
+    impact:
+      "Standardized identity across the enterprise, cutting auth-related defects and letting new services ship secure login in days, not weeks.",
+    gradient: ["#b98a37", "#7c5cff"],
     featured: true,
     githubUrl: "https://github.com/akashmadduru",
     liveUrl: "",
@@ -108,7 +118,10 @@ export const projects: Project[] = [
       { value: "3+", label: "Payment gateways" },
       { value: "95+", label: "Lighthouse performance" },
     ],
-    gradient: ["#22d3ee", "#4f7cff"],
+    timeline: "5 months · 2022",
+    impact:
+      "Lifted conversion and repeat purchases through a faster, smoother checkout that performs on any device.",
+    gradient: ["#cf9a3a", "#3fb6c9"],
     featured: true,
     githubUrl: "https://github.com/akashmadduru",
     liveUrl: "",
@@ -134,7 +147,10 @@ export const projects: Project[] = [
       { value: "Real-time", label: "Transaction status UX" },
       { value: "0", label: "Custody of user funds" },
     ],
-    gradient: ["#ff5ca8", "#7c5cff"],
+    timeline: "4 months · 2021",
+    impact:
+      "Made on-chain interactions approachable and trustworthy, growing active wallets with zero custody of user funds.",
+    gradient: ["#d98a4e", "#a15cff"],
     githubUrl: "https://github.com/akashmadduru",
     liveUrl: "",
   },
@@ -159,7 +175,10 @@ export const projects: Project[] = [
       { value: "60fps", label: "Smooth interactions" },
       { value: "Offline", label: "First-class support" },
     ],
-    gradient: ["#22d3ee", "#7c5cff"],
+    timeline: "4 months · 2021",
+    impact:
+      "Reached both app stores from a single codebase, roughly halving mobile delivery time and maintenance cost.",
+    gradient: ["#c9962f", "#3fb6c9"],
     githubUrl: "https://github.com/akashmadduru",
     liveUrl: "",
   },
@@ -192,7 +211,10 @@ export const projects: Project[] = [
       { value: "Independent", label: "Service scaling" },
       { value: "Traced", label: "End-to-end requests" },
     ],
-    gradient: ["#7c5cff", "#4f7cff"],
+    timeline: "7 months · 2023",
+    impact:
+      "Unlocked independent team velocity and safer, more frequent releases — scaling delivery without scaling risk.",
+    gradient: ["#b98a37", "#6f7bd6"],
     githubUrl: "https://github.com/akashmadduru",
     liveUrl: "",
   },
@@ -224,7 +246,10 @@ export const projects: Project[] = [
       { value: "60fps", label: "Animation budget" },
       { value: "WCAG AA", label: "Accessibility" },
     ],
-    gradient: ["#22d3ee", "#ff5ca8"],
+    timeline: "2026 · ongoing",
+    impact:
+      "A living proof-of-craft that turns recruiter visits into conversations — the medium is the case study.",
+    gradient: ["#cf9a3a", "#d98aa8"],
     githubUrl: "https://github.com/akashmadduru",
     liveUrl: "",
   },

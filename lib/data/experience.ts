@@ -32,7 +32,7 @@ export const experiences: ExperienceItem[] = [
     company: "Mivada Technologies",
     role: "Associate IT Consultant",
     period: "2022 — 2023",
-    location: "Sydney, Australia (Remote)",
+    location: "Hyderabad, India",
     summary:
       "Delivered secure backend services for the Western Sydney Airport program, implementing authentication, authorization, and production support for mission-critical systems.",
     highlights: [
@@ -54,7 +54,7 @@ export const experiences: ExperienceItem[] = [
     company: "Axlr Data",
     role: "Full Stack Developer",
     period: "2021 — 2022",
-    location: "Remote",
+    location: "Hyderabad, India",
     summary:
       "Built custom eCommerce experiences end-to-end — from storefront UI to payment integrations — with a relentless focus on conversion and page performance.",
     highlights: [
@@ -69,7 +69,7 @@ export const experiences: ExperienceItem[] = [
     company: "Artemis Network",
     role: "Software Engineer",
     period: "2020 — 2021",
-    location: "Remote",
+    location: "Bangalore, India",
     summary:
       "Full-spectrum product engineering across web, mobile, and blockchain — building DApps and APIs with whichever framework best fit the problem.",
     highlights: [

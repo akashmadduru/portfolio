@@ -41,7 +41,7 @@ export function Skills() {
                   onMouseEnter={() => setActive(category.id)}
                   onMouseLeave={() => setActive(null)}
                   className={cn(
-                    "group relative h-full overflow-hidden rounded-2xl border border-white/10 bg-card/40 p-6 backdrop-blur-xl transition-all duration-300",
+                    "panel group relative h-full cursor-pointer overflow-hidden rounded-2xl p-6 transition-all duration-300",
                     "hover:-translate-y-1 hover:border-white/20",
                   )}
                   style={

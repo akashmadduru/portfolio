@@ -79,7 +79,7 @@ export function Contact() {
   return (
     <section id="contact" className="relative scroll-mt-24 py-24 sm:py-32">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-card/40 p-8 backdrop-blur-2xl sm:p-12">
+        <div className="panel relative overflow-hidden rounded-3xl p-8 sm:p-12">
           <div
             aria-hidden
             className="pointer-events-none absolute -left-20 -top-20 size-72 rounded-full bg-primary/20 blur-[110px]"

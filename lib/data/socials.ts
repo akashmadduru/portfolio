@@ -16,25 +16,25 @@ export interface SocialLink {
  */
 export const contact = {
   email: "akashmadduru@gmail.com",
-  phone: "+91 90000 00000", // TODO: replace with real phone
-  phoneHref: "tel:+919000000000", // TODO: replace with real phone
+  phone: "+91 9494535327", // TODO: replace with real phone
+  phoneHref: "tel:+919494535327", // TODO: replace with real phone
   location: "Hyderabad, India",
   // TODO: replace with your real profile URLs
   githubUrl: "https://github.com/akashmadduru",
-  linkedinUrl: "https://www.linkedin.com/in/akashmadduru",
+  linkedinUrl: "https://www.linkedin.com/in/akashmrc98",
 } as const;
 
 export const socials: SocialLink[] = [
   {
     label: "LinkedIn",
     href: contact.linkedinUrl,
-    handle: "in/akashmadduru",
+    handle: "in/akashmrc98",
     icon: Linkedin,
   },
   {
     label: "GitHub",
     href: contact.githubUrl,
-    handle: "@akashmadduru",
+    handle: "@akashmrc98",
     icon: Github,
   },
   {

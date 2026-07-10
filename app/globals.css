@@ -1,61 +1,66 @@
 @import "tailwindcss";
 
-/* ------------------------------------------------------------------ */
-/*  Design tokens (Tailwind v4, CSS-first).                            */
-/*  Non-inline @theme so tokens are BOTH emitted as :root custom       */
-/*  properties (usable via var(--color-*)) AND generate utilities      */
-/*  (bg-primary, text-muted-foreground, …). Dark-only theme.           */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
+/*  SKEUOMORPHIC DESIGN LANGUAGE — "Graphite & Amber"                  */
+/*  Handcrafted, tactile, industrial-premium (Nothing / Teenage        */
+/*  Engineering / Apple hardware). Matte machined surfaces, real        */
+/*  bevels & soft shadows, one warm amber signal accent. No glass,      */
+/*  no neon.                                                            */
+/* ================================================================== */
 @theme {
-  --radius: 0.85rem;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius: 0.7rem;
+  --radius-sm: calc(var(--radius) - 3px);
+  --radius-md: calc(var(--radius) - 1px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 10px);
 
-  --color-background: oklch(0.16 0.015 275);
-  --color-foreground: oklch(0.97 0.005 260);
+  /* Warm graphite base */
+  --color-background: oklch(0.158 0.005 70);
+  --color-foreground: oklch(0.915 0.008 78);
 
-  --color-card: oklch(0.2 0.02 275);
-  --color-card-foreground: oklch(0.97 0.005 260);
+  /* Machined panel surfaces */
+  --color-card: oklch(0.212 0.006 72);
+  --color-card-foreground: oklch(0.915 0.008 78);
+  --color-popover: oklch(0.205 0.006 72);
+  --color-popover-foreground: oklch(0.915 0.008 78);
 
-  --color-popover: oklch(0.19 0.02 275);
-  --color-popover-foreground: oklch(0.97 0.005 260);
+  /* Amber signal accent */
+  --color-primary: oklch(0.735 0.162 55);
+  --color-primary-foreground: oklch(0.205 0.03 60);
 
-  --color-primary: oklch(0.72 0.17 295);
-  --color-primary-foreground: oklch(0.15 0.02 280);
+  --color-secondary: oklch(0.26 0.006 72);
+  --color-secondary-foreground: oklch(0.915 0.008 78);
 
-  --color-secondary: oklch(0.26 0.02 275);
-  --color-secondary-foreground: oklch(0.97 0.005 260);
+  --color-muted: oklch(0.26 0.006 72);
+  --color-muted-foreground: oklch(0.7 0.012 74);
 
-  --color-muted: oklch(0.26 0.02 275);
-  --color-muted-foreground: oklch(0.72 0.02 270);
+  --color-accent: oklch(0.29 0.02 62);
+  --color-accent-foreground: oklch(0.93 0.008 78);
 
-  --color-accent: oklch(0.28 0.04 280);
-  --color-accent-foreground: oklch(0.97 0.005 260);
+  --color-destructive: oklch(0.6 0.16 28);
+  --color-destructive-foreground: oklch(0.96 0.01 78);
 
-  --color-destructive: oklch(0.62 0.2 20);
-  --color-destructive-foreground: oklch(0.98 0.01 260);
+  --color-border: oklch(0.86 0.02 78 / 9%);
+  --color-input: oklch(0.86 0.02 78 / 12%);
+  --color-ring: oklch(0.735 0.162 55);
 
-  --color-border: oklch(1 0 0 / 10%);
-  --color-input: oklch(1 0 0 / 14%);
-  --color-ring: oklch(0.72 0.17 295);
+  /* "aurora-*" names retained (referenced across components) but remapped
+     to a warm metal palette: amber → brass → champagne → copper. */
+  --color-aurora-1: oklch(0.735 0.162 55); /* amber      */
+  --color-aurora-2: oklch(0.78 0.1 82); /* brass      */
+  --color-aurora-3: oklch(0.9 0.035 85); /* champagne  */
+  --color-aurora-4: oklch(0.6 0.14 42); /* copper     */
 
-  /* Brand / aurora palette */
-  --color-aurora-1: oklch(0.72 0.17 295); /* violet */
-  --color-aurora-2: oklch(0.75 0.15 230); /* blue   */
-  --color-aurora-3: oklch(0.82 0.15 190); /* cyan   */
-  --color-aurora-4: oklch(0.72 0.19 350); /* pink   */
+  /* Physical shadow / highlight primitives */
+  --edge-hi: oklch(0.98 0.01 80 / 9%);
+  --edge-lo: oklch(0 0 0 / 55%);
 
-  --animate-aurora: aurora 18s ease-in-out infinite;
+  --animate-sheen: sheen 7s ease-in-out infinite;
   --animate-float: float 6s ease-in-out infinite;
-  --animate-shimmer: shimmer 2.5s linear infinite;
-  --animate-marquee: marquee 40s linear infinite;
 }
 
-/* Fonts kept inline so `font-sans` inlines `var(--font-sans)` (set by
-   next/font on <body>) without self-referencing at :root. */
+/* Fonts kept inline so `font-sans` inlines var(--font-sans) from next/font. */
 @theme inline {
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display), var(--font-sans), sans-serif;
@@ -76,7 +81,6 @@
     color-scheme: dark;
   }
 
-  /* When Lenis controls scrolling, native smooth scroll is disabled. */
   html.lenis,
   html.lenis body {
     height: auto;
@@ -96,62 +100,117 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
+    /* faint machined vignette + top light */
+    background-image:
+      radial-gradient(120% 80% at 50% -10%, oklch(0.24 0.01 74 / 0.5), transparent 60%),
+      radial-gradient(100% 100% at 50% 120%, oklch(0.1 0.004 60 / 0.6), transparent 55%);
+    background-attachment: fixed;
   }
 
   ::selection {
-    background: color-mix(in oklch, var(--color-aurora-1) 40%, transparent);
-    color: white;
+    background: color-mix(in oklch, var(--color-primary) 35%, transparent);
+    color: oklch(0.98 0.01 80);
   }
 
-  /* Custom themed scrollbar */
   ::-webkit-scrollbar {
-    width: 10px;
+    width: 12px;
   }
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: oklch(0.12 0.004 60);
   }
   ::-webkit-scrollbar-thumb {
-    background: color-mix(in oklch, var(--color-aurora-1) 45%, transparent);
+    background: linear-gradient(180deg, oklch(0.34 0.01 72), oklch(0.24 0.008 72));
     border-radius: 999px;
-    border: 2px solid transparent;
-    background-clip: content-box;
+    border: 3px solid oklch(0.12 0.004 60);
+    box-shadow: inset 0 1px 0 var(--edge-hi);
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in oklch, var(--color-aurora-1) 70%, transparent);
-    background-clip: content-box;
+    background: linear-gradient(180deg, oklch(0.4 0.02 68), oklch(0.28 0.01 70));
   }
 
   :focus-visible {
     outline: 2px solid var(--color-ring);
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: 5px;
+  }
+
+  /* Clickable elements always read as interactive. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  summary,
+  label[for],
+  select {
+    cursor: pointer;
+  }
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
   }
 }
 
 /* ------------------------------------------------------------------ */
-/*  Utilities                                                         */
+/*  Skeuomorphic material utilities                                    */
 /* ------------------------------------------------------------------ */
 @layer utilities {
+  /* Raised machined panel: light from above, beveled edges, soft drop. */
+  .panel {
+    background:
+      linear-gradient(180deg, oklch(0.245 0.007 74), oklch(0.2 0.006 72));
+    border: 1px solid oklch(0.86 0.02 78 / 8%);
+    box-shadow:
+      inset 0 1px 0 var(--edge-hi),
+      inset 0 -1px 0 oklch(0 0 0 / 35%),
+      0 1px 1px oklch(0 0 0 / 20%),
+      0 18px 40px -22px oklch(0 0 0 / 75%);
+  }
+
+  .panel-soft {
+    background: linear-gradient(180deg, oklch(0.232 0.006 74), oklch(0.198 0.006 72));
+    border: 1px solid oklch(0.86 0.02 78 / 7%);
+    box-shadow:
+      inset 0 1px 0 var(--edge-hi),
+      0 10px 30px -20px oklch(0 0 0 / 70%);
+  }
+
+  /* Recessed / inset well (screens, inputs, pressed states). */
+  .inset-well {
+    background: linear-gradient(180deg, oklch(0.14 0.004 66), oklch(0.175 0.005 70));
+    border: 1px solid oklch(0 0 0 / 40%);
+    box-shadow:
+      inset 0 2px 6px oklch(0 0 0 / 55%),
+      inset 0 -1px 0 var(--edge-hi);
+  }
+
+  /* Legacy names remapped to matte panels (was glassmorphism). */
   .glass {
-    background: color-mix(in oklch, var(--color-card) 55%, transparent);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    border: 1px solid color-mix(in oklch, white 10%, transparent);
+    background: linear-gradient(180deg, oklch(0.235 0.006 74 / 0.92), oklch(0.2 0.006 72 / 0.92));
+    border: 1px solid oklch(0.86 0.02 78 / 8%);
+    box-shadow:
+      inset 0 1px 0 var(--edge-hi),
+      0 14px 34px -22px oklch(0 0 0 / 72%);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
-
   .glass-strong {
-    background: color-mix(in oklch, var(--color-card) 78%, transparent);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid color-mix(in oklch, white 12%, transparent);
+    background: linear-gradient(180deg, oklch(0.25 0.007 74), oklch(0.205 0.006 72));
+    border: 1px solid oklch(0.86 0.02 78 / 10%);
+    box-shadow:
+      inset 0 1px 0 var(--edge-hi),
+      inset 0 -1px 0 oklch(0 0 0 / 40%),
+      0 20px 44px -22px oklch(0 0 0 / 80%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
+  /* Warm brushed-metal text (was neon gradient). */
   .text-gradient {
     background: linear-gradient(
-      110deg,
-      var(--color-aurora-3) 0%,
-      var(--color-aurora-1) 45%,
-      var(--color-aurora-4) 100%
+      175deg,
+      oklch(0.96 0.02 85) 0%,
+      oklch(0.86 0.06 78) 42%,
+      var(--color-primary) 74%,
+      oklch(0.62 0.13 44) 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
@@ -162,37 +221,63 @@
     text-wrap: balance;
   }
 
+  /* Restrained metallic sheen sweep. */
   .aurora-text {
     background: linear-gradient(
-      110deg,
-      var(--color-aurora-3),
-      var(--color-aurora-1),
-      var(--color-aurora-4),
-      var(--color-aurora-2),
-      var(--color-aurora-3)
+      100deg,
+      oklch(0.9 0.03 85) 0%,
+      oklch(0.98 0.02 88) 45%,
+      var(--color-primary) 55%,
+      oklch(0.9 0.03 85) 100%
     );
-    background-size: 220% 220%;
+    background-size: 220% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: aurora 12s ease infinite;
+    animation: sheen 7s ease-in-out infinite;
   }
 
+  /* Engraved / debossed label text. */
+  .engraved {
+    text-shadow:
+      0 1px 0 oklch(0.98 0.01 80 / 0.06),
+      0 -1px 1px oklch(0 0 0 / 0.5);
+  }
+
+  /* Soft beveled ring (replaces neon glow-ring). */
   .glow-ring {
     box-shadow:
-      0 0 0 1px color-mix(in oklch, var(--color-aurora-1) 30%, transparent),
-      0 0 40px -8px color-mix(in oklch, var(--color-aurora-1) 55%, transparent);
+      inset 0 1px 0 var(--edge-hi),
+      0 1px 2px oklch(0 0 0 / 0.3),
+      0 22px 50px -26px oklch(0 0 0 / 0.8);
   }
 
+  /* Fine engraved reference grid (was bright grid). */
   .bg-grid {
     background-image:
-      linear-gradient(to right, color-mix(in oklch, white 4%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklch, white 4%, transparent) 1px, transparent 1px);
-    background-size: 56px 56px;
-    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 100%);
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 40%, transparent 100%);
+      linear-gradient(to right, oklch(0.86 0.02 78 / 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(0.86 0.02 78 / 0.035) 1px, transparent 1px);
+    background-size: 46px 46px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 40%, black 30%, transparent 100%);
+    mask-image: radial-gradient(ellipse 75% 65% at 50% 40%, black 30%, transparent 100%);
   }
 
+  /* Nothing-style dot matrix. */
+  .dot-matrix {
+    background-image: radial-gradient(oklch(0.86 0.02 78 / 0.14) 1.1px, transparent 1.2px);
+    background-size: 16px 16px;
+  }
+
+  /* Knurled / grooved metal texture. */
+  .knurl {
+    background-image: repeating-linear-gradient(
+      90deg,
+      oklch(1 0 0 / 0.05) 0 1px,
+      transparent 1px 4px
+    );
+  }
+
+  /* Grain overlay. */
   .noise {
     position: relative;
   }
@@ -201,8 +286,8 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.04;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   .mask-fade-x {
@@ -210,15 +295,115 @@
     mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
   }
 
-  .perspective {
-    perspective: 1200px;
+  /* ---- Tactile physical buttons ---- */
+  .btn-amber {
+    color: var(--color-primary-foreground);
+    background: linear-gradient(180deg, oklch(0.79 0.16 58), oklch(0.69 0.16 51));
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 0.4),
+      inset 0 -1px 0 oklch(0 0 0 / 0.28),
+      0 1px 1px oklch(0 0 0 / 0.3),
+      0 12px 22px -10px oklch(0.6 0.16 50 / 0.55);
+    transition:
+      transform 0.08s ease,
+      box-shadow 0.15s ease,
+      filter 0.15s ease;
+  }
+  .btn-amber:hover {
+    filter: brightness(1.06);
+  }
+  .btn-amber:active {
+    transform: translateY(1px);
+    box-shadow:
+      inset 0 2px 5px oklch(0 0 0 / 0.4),
+      inset 0 1px 0 oklch(1 0 0 / 0.15);
+  }
+
+  .btn-metal {
+    color: var(--color-foreground);
+    background: linear-gradient(180deg, oklch(0.29 0.008 74), oklch(0.225 0.006 72));
+    border: 1px solid oklch(0.86 0.02 78 / 0.1);
+    box-shadow:
+      inset 0 1px 0 var(--edge-hi),
+      inset 0 -1px 0 oklch(0 0 0 / 0.3),
+      0 1px 1px oklch(0 0 0 / 0.25),
+      0 10px 20px -12px oklch(0 0 0 / 0.7);
+    transition:
+      transform 0.08s ease,
+      box-shadow 0.15s ease,
+      filter 0.15s ease;
+  }
+  .btn-metal:hover {
+    filter: brightness(1.08);
+  }
+  .btn-metal:active {
+    transform: translateY(1px);
+    box-shadow:
+      inset 0 2px 5px oklch(0 0 0 / 0.45),
+      inset 0 -1px 0 var(--edge-hi);
+  }
+
+  .btn-ghost {
+    color: color-mix(in oklch, var(--color-foreground) 82%, transparent);
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .btn-ghost:hover {
+    background: oklch(0.86 0.02 78 / 0.06);
+    color: var(--color-foreground);
+  }
+
+  /* Interactive elevation — object lifts toward the light on hover, with a
+     deeper, softer, multi-layer shadow (ambient occlusion + cast + contact). */
+  .lift {
+    cursor: pointer;
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 0.4s ease;
+    will-change: transform;
+  }
+  .lift:hover {
+    transform: translateY(-4px);
+    filter: brightness(1.05);
+    box-shadow:
+      inset 0 1px 0 var(--edge-hi),
+      inset 0 -1px 0 oklch(0 0 0 / 0.4),
+      0 2px 2px oklch(0 0 0 / 0.2),
+      0 10px 20px -8px oklch(0 0 0 / 0.55),
+      0 34px 60px -28px oklch(0 0 0 / 0.85);
+  }
+
+  /* Slow "breathing" pulse for important elements (status dot, key CTAs). */
+  .breathe {
+    animation: breathe 4.5s ease-in-out infinite;
+  }
+
+  /* Amber signal glow ring for live indicators. */
+  .signal-dot {
+    box-shadow:
+      0 0 0 3px color-mix(in oklch, var(--color-primary) 18%, transparent),
+      0 0 10px 1px color-mix(in oklch, var(--color-primary) 55%, transparent);
   }
 }
 
 /* ------------------------------------------------------------------ */
-/*  Keyframes                                                         */
+/*  Keyframes (restrained)                                             */
 /* ------------------------------------------------------------------ */
-@keyframes aurora {
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+@keyframes sheen {
   0%,
   100% {
     background-position: 0% 50%;
@@ -234,29 +419,11 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-12px);
+    transform: translateY(-8px);
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-/* Radix Dialog transitions (data-state driven) */
+/* Radix Dialog transitions */
 @keyframes overlay-in {
   from {
     opacity: 0;
@@ -268,7 +435,7 @@
 @keyframes content-in {
   from {
     opacity: 0;
-    transform: translate(-50%, -46%) scale(0.96);
+    transform: translate(-50%, -46%) scale(0.97);
   }
   to {
     opacity: 1;
@@ -279,7 +446,7 @@
   animation: overlay-in 0.25s ease forwards;
 }
 .dialog-content-anim[data-state="open"] {
-  animation: content-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: content-in 0.34s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 /* ------------------------------------------------------------------ */

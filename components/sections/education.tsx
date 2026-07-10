@@ -22,7 +22,7 @@ export function Education() {
           {education.map((item, i) => (
             <Reveal key={item.degree} delay={i * 0.1}>
               <Spotlight className="h-full rounded-2xl">
-                <article className="flex h-full flex-col gap-4 rounded-2xl border border-white/10 bg-card/40 p-7 backdrop-blur-xl transition-colors hover:border-white/20">
+                <article className="panel lift flex h-full flex-col gap-4 rounded-2xl p-7">
                   <div className="flex items-center justify-between">
                     <span className="grid size-12 place-items-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/25">
                       <GraduationCap className="size-6" />

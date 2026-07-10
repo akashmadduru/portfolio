@@ -1,11 +1,12 @@
 "use client";
 
-import { ArrowUpRight, Github, Layers } from "lucide-react";
+import { ArrowUpRight, CalendarClock, Github, Layers, TrendingUp } from "lucide-react";
 
 import { SectionHeading } from "@/components/layout/section-heading";
 import { Reveal } from "@/components/motion/reveal";
 import { Spotlight } from "@/components/motion/spotlight";
 import { TiltCard } from "@/components/motion/tilt-card";
+import { ProjectArtwork } from "@/components/sections/project-artwork";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,28 +19,20 @@ import {
 } from "@/components/ui/dialog";
 import { projects, type Project } from "@/lib/data/projects";
 
-function GradientArt({ project, className }: { project: Project; className?: string }) {
+function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className={className}
-      style={{
-        background: `radial-gradient(120% 120% at 20% 10%, ${project.gradient[0]}55, transparent 55%), radial-gradient(120% 120% at 85% 90%, ${project.gradient[1]}55, transparent 55%), linear-gradient(135deg, #0c0e1a, #10131f)`,
-      }}
-    >
-      <div className="absolute inset-0 bg-grid opacity-30" />
-    </div>
+    <h4 className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/80">
+      {children}
+    </h4>
   );
 }
 
 function ProjectDetail({ project }: { project: Project }) {
   return (
     <div>
-      <div className="relative h-44 w-full overflow-hidden rounded-t-2xl sm:h-52">
-        <GradientArt project={project} className="absolute inset-0" />
-        <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
-        <div className="absolute bottom-4 left-6 right-6">
-          <Badge className="mb-2">{project.category}</Badge>
-        </div>
+      <div className="relative h-48 w-full overflow-hidden rounded-t-2xl sm:h-56">
+        <ProjectArtwork project={project} kind="hero" />
+        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
       </div>
 
       <div className="space-y-7 p-6 sm:p-8">
@@ -48,25 +41,45 @@ function ProjectDetail({ project }: { project: Project }) {
           <DialogDescription>{project.tagline}</DialogDescription>
         </DialogHeader>
 
+        {/* Meta row */}
+        <div className="flex flex-wrap gap-2 font-mono text-[11px] uppercase tracking-wider">
+          <span className="inset-well rounded-md px-2.5 py-1 text-foreground/70">
+            {project.category}
+          </span>
+          <span className="inset-well rounded-md px-2.5 py-1 text-foreground/70">
+            {project.year}
+          </span>
+          <span className="inset-well inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-foreground/70">
+            <CalendarClock className="size-3" />
+            {project.timeline}
+          </span>
+        </div>
+
         <section className="space-y-2">
-          <h4 className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/80">
-            Overview
-          </h4>
+          <SectionLabel>Overview</SectionLabel>
           <p className="text-sm leading-relaxed text-foreground/75">{project.overview}</p>
         </section>
 
         <section className="space-y-2">
-          <h4 className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/80">
-            Architecture
-          </h4>
+          <SectionLabel>Architecture</SectionLabel>
           <p className="text-sm leading-relaxed text-foreground/75">{project.architecture}</p>
+        </section>
+
+        {/* Supporting gallery */}
+        <section className="space-y-3">
+          <SectionLabel>Gallery</SectionLabel>
+          <div className="grid grid-cols-3 gap-3">
+            {[1, 2, 3].map((s) => (
+              <div key={s} className="inset-well aspect-[4/3] overflow-hidden rounded-lg">
+                <ProjectArtwork project={project} kind="tile" seed={s} />
+              </div>
+            ))}
+          </div>
         </section>
 
         <div className="grid gap-7 sm:grid-cols-2">
           <section className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/80">
-              Key Challenges
-            </h4>
+            <SectionLabel>Key Challenges</SectionLabel>
             <ul className="space-y-2">
               {project.challenges.map((c) => (
                 <li key={c} className="flex gap-2.5 text-sm leading-relaxed text-foreground/70">
@@ -78,15 +91,10 @@ function ProjectDetail({ project }: { project: Project }) {
           </section>
 
           <section className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/80">
-              Results
-            </h4>
+            <SectionLabel>Key Achievements</SectionLabel>
             <div className="grid grid-cols-3 gap-2">
               {project.results.map((r) => (
-                <div
-                  key={r.label}
-                  className="rounded-xl border border-white/10 bg-white/[0.02] p-3 text-center"
-                >
+                <div key={r.label} className="inset-well rounded-xl p-3 text-center">
                   <div className="font-display text-lg font-semibold text-gradient">{r.value}</div>
                   <div className="mt-1 text-[11px] leading-tight text-muted-foreground">
                     {r.label}
@@ -97,10 +105,19 @@ function ProjectDetail({ project }: { project: Project }) {
           </section>
         </div>
 
+        {/* Business impact */}
         <section className="space-y-3">
-          <h4 className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/80">
-            Tech Stack
-          </h4>
+          <SectionLabel>Business Impact</SectionLabel>
+          <div className="panel flex items-start gap-3 rounded-xl p-4">
+            <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary ring-1 ring-primary/25">
+              <TrendingUp className="size-4" />
+            </span>
+            <p className="text-sm leading-relaxed text-foreground/80">{project.impact}</p>
+          </div>
+        </section>
+
+        <section className="space-y-3">
+          <SectionLabel>Tech Stack</SectionLabel>
           <div className="flex flex-wrap gap-1.5">
             {project.techStack.map((tech) => (
               <span
@@ -141,24 +158,25 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         <DialogTrigger asChild>
           <button
             type="button"
-            className="group h-full w-full text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl"
+            className="group h-full w-full rounded-2xl text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             aria-label={`Open case study: ${project.title}`}
           >
             <TiltCard max={6} className="h-full">
               <Spotlight className="h-full rounded-2xl">
-                <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-card/40 backdrop-blur-xl transition-colors group-hover:border-white/20">
+                <article className="panel lift flex h-full flex-col overflow-hidden rounded-2xl">
                   <div className="relative h-40 overflow-hidden">
-                    <GradientArt
+                    <ProjectArtwork
                       project={project}
-                      className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                      kind="tile"
+                      className="transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-card/90 to-transparent" />
                     {project.featured && (
-                      <span className="absolute left-4 top-4 rounded-full border border-white/15 bg-black/30 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-white/80 backdrop-blur-md">
+                      <span className="absolute left-4 top-4 rounded-full border border-white/15 bg-black/40 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-white/85">
                         Featured
                       </span>
                     )}
-                    <span className="absolute right-4 top-4 grid size-9 place-items-center rounded-full border border-white/15 bg-black/30 text-white/80 backdrop-blur-md transition-all group-hover:bg-white/15 group-hover:text-white">
+                    <span className="absolute right-4 top-4 grid size-9 place-items-center rounded-full border border-white/15 bg-black/40 text-white/80 transition-all group-hover:bg-white/15 group-hover:text-white">
                       <ArrowUpRight className="size-4" />
                     </span>
                   </div>
