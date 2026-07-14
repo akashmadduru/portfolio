@@ -26,7 +26,7 @@ export const experiences: ExperienceItem[] = [
       "Champion automated testing and documentation to keep long-lived systems maintainable.",
       "Operate in a fast-moving Agile team, breaking down ambiguous requirements into shippable increments.",
     ],
-    stack: ["Java", "Spring", "TypeScript", "React", "REST", "CI/CD", "Agile"],
+    stack: ["Python", "FastAPI", "TypeScript", "Vue", "Heroku", "CI/CD", "Agile"],
   },
   {
     company: "Mivada Technologies",
