@@ -63,7 +63,7 @@ export const experiences: ExperienceItem[] = [
       "Cut page load times and improved Core Web Vitals through targeted performance optimization.",
       "Translated design mockups into responsive, accessible, pixel-accurate interfaces.",
     ],
-    stack: ["React", "Node.js", "Express", "Stripe", "MongoDB", "Tailwind CSS"],
+    stack: ["NextJS", "Node.js", "Express", "Razorpay", "MongoDB", "Postgres", "Tailwind CSS"],
   },
   {
     company: "Artemis Network",
