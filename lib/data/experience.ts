@@ -16,7 +16,7 @@ export const experiences: ExperienceItem[] = [
   {
     company: "FactSet",
     role: "Software Engineer II",
-    period: "2023 — Present",
+    period: "2026 May — Present",
     location: "Hyderabad, India",
     summary:
       "Building and maintaining enterprise-grade financial software used by analysts and portfolio managers worldwide, with a focus on reliability, testability, and clean architecture.",
@@ -31,7 +31,7 @@ export const experiences: ExperienceItem[] = [
   {
     company: "Mivada Technologies",
     role: "Associate IT Consultant",
-    period: "2022 — 2023",
+    period: "2024 Sep — 2026 Apr",
     location: "Hyderabad, India",
     summary:
       "Delivered secure backend services for the Western Sydney Airport program, implementing authentication, authorization, and production support for mission-critical systems.",
@@ -53,7 +53,7 @@ export const experiences: ExperienceItem[] = [
   {
     company: "Axlr Data",
     role: "Full Stack Developer",
-    period: "2021 — 2022",
+    period: "2024 March — 2024 Aug",
     location: "Hyderabad, India",
     summary:
       "Built custom eCommerce experiences end-to-end — from storefront UI to payment integrations — with a relentless focus on conversion and page performance.",
@@ -68,7 +68,7 @@ export const experiences: ExperienceItem[] = [
   {
     company: "Artemis Network",
     role: "Software Engineer",
-    period: "2020 — 2021",
+    period: "2021 Sep — 2024 Feb",
     location: "Bangalore, India",
     summary:
       "Full-spectrum product engineering across web, mobile, and blockchain — building DApps and APIs with whichever framework best fit the problem.",
