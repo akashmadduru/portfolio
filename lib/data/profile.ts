@@ -24,7 +24,7 @@ export const profile = {
   narrative: [
     "For the past 4.5+ years I've lived at the seam where reliability meets craft — designing enterprise systems that thousands depend on, then obsessing over the millisecond details that make them feel instant.",
     "I've shipped across the stack and across domains: production financial software at scale, secure authentication for critical infrastructure, custom eCommerce with real payment flows, and blockchain DApps at the frontier of crypto.",
-    "My north star is simple — engineer systems that are correct, observable, and fast, then wrap them in experiences people actually enjoy using.",
+    "My motto is simple — engineer systems that are correct, observable, and fast, then wrap them in experiences people actually enjoy using.",
   ],
 
   /** Headline metrics for the About section. */
