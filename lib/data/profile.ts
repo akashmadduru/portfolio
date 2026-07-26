@@ -13,7 +13,7 @@ export const profile = {
   tagline:
     "I build resilient, cloud-native systems and interfaces that feel effortless — from enterprise platforms to crypto and eCommerce.",
   // Path to your resume in /public. Replace public/resume.pdf with your real file.
-  resumeUrl: "/resume.pdf",
+  resumeUrl: "/akash_madduru_resume.pdf",
   location: contact.location,
   email: contact.email,
   // availability: "Open to senior & staff engineering roles",
