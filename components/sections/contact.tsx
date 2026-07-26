@@ -54,7 +54,7 @@ export function Contact() {
 
       if (res.ok && data.ok) {
         toast.success("Message sent!", {
-          description: "Thanks for reaching out — I'll get back to you soon.",
+          description: "Check your inbox for a confirmation — I'll reply properly soon.",
         });
         reset();
         return;

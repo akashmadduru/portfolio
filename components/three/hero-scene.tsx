@@ -92,17 +92,17 @@ function FitProbe() {
 /*  Model rig — idle hover-flight wobble + a slow, smooth hover-in tilt.  */
 /* --------------------------------------------------------------------- */
 /** Sideways drift/yaw-sway angular frequency, rad/s — unaffected by hover. */
-const IDLE_WOBBLE_SPEED = 1;
+const IDLE_WOBBLE_SPEED = .5;
 /** Sideways drift amplitude, world units. */
-const IDLE_DRIFT_X = 0.16;
+const IDLE_DRIFT_X = .8;
 /** Yaw sway amplitude while drifting, in radians. */
-const IDLE_YAW_AMPLITUDE = 0.14;
+const IDLE_YAW_AMPLITUDE = 0.3;
 /** Bank/roll tilt amplitude while drifting, in radians (like a real quad banking into a turn). */
-const IDLE_BANK_TILT = 0.09;
+const IDLE_BANK_TILT = 0.1;
 /** How far the model eases toward the pointer while hovered, in radians. */
-const HOVER_TILT = 0.3;
+const HOVER_TILT = 0.4;
 /** Scale pop while hovered, as a fraction of REST_SCALE. */
-const HOVER_SCALE_POP = 0.15;
+const HOVER_SCALE_POP = 0.3;
 /** Per-frame ease rate (at 60fps) for the hover-in/out amount — low = slow, smooth. */
 const HOVER_EASE = 0.035;
 /** Per-frame ease rate for the pointer-tilt target itself, so it glides rather than snaps. */
@@ -166,7 +166,7 @@ function ModelRig({ scrollProgress }: SceneProps) {
   });
 
   return (
-    <AutoFit fill={1.2}>
+    <AutoFit fill={1}>
       <group
         ref={outer}
         scale={REST_SCALE}

@@ -57,6 +57,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, fallback: true }, { status: 200 });
     }
 
+    // Best-effort auto-reply to the sender confirming receipt. Never fails
+    // the request — the inquiry to `to` above is the critical path, and a
+    // Resend account without a verified sending domain can only deliver to
+    // its own account email anyway, so this reply may silently no-op.
+    try {
+      await resend.emails.send({
+        from: `Akash Madduru <${from}>`,
+        to: [email],
+        subject: "Thanks for reaching out",
+        text: `Hi ${name},\n\nThanks for your message — I've received it and will get back to you soon.\n\nFor reference, here's what you sent:\n"${message}"\n\n— Akash Madduru`,
+      });
+    } catch {
+      // Ignore — the visitor's inquiry already made it through.
+    }
+
     return NextResponse.json({ ok: true });
   } catch {
     // Package missing or transient failure → graceful fallback.

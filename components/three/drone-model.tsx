@@ -1,6 +1,6 @@
 "use client";
 
-import { RoundedBox, useGLTF } from "@react-three/drei";
+import { RoundedBox, SpotLight, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as React from "react";
 import * as THREE from "three";
@@ -36,7 +36,7 @@ export const SCROLL_END_ROTATION: [number, number, number] = [0, 0, 0];
  * Scroll-end scale as a PERCENTAGE zoom delta (negative = zoom out).
  * Consumed as `REST_SCALE * (1 + SCROLL_END_SCALE_MULT / 100)`.
  */
-export const SCROLL_END_SCALE_MULT = 18;
+export const SCROLL_END_SCALE_MULT = 1;
 
 /**
  * Resolve which candidate path actually exists (HEAD probe). Returns `null`
@@ -217,6 +217,52 @@ function Rotor({ x, z }: { x: number; z: number }) {
   );
 }
 
+/** Search-beam sweep angular frequency, rad/s. */
+const SEARCHLIGHT_SWEEP_SPEED = 1;
+/** Search-beam sweep half-range on X, world units. */
+const SEARCHLIGHT_SWEEP_RANGE = 1;
+
+/**
+ * A soft volumetric spotlight mounted at the gimbal camera lens under the
+ * nose, sweeping left-right like a search-and-rescue drone scanning the
+ * ground ahead.
+ */
+function SearchLight() {
+  const spot = React.useRef<THREE.SpotLight>(null);
+  const target = React.useRef<THREE.Object3D>(null);
+
+  React.useEffect(() => {
+    if (spot.current && target.current) {
+      spot.current.target = target.current;
+    }
+  }, []);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    if (target.current) {
+      target.current.position.x = Math.sin(t * SEARCHLIGHT_SWEEP_SPEED) * SEARCHLIGHT_SWEEP_RANGE;
+    }
+  });
+
+  return (
+    <group position={[0, -0.2, 0.5]}>
+      <SpotLight
+        ref={spot}
+        castShadow={false}
+        color="#ffd9ab"
+        intensity={5}
+        angle={0.26}
+        penumbra={0.6}
+        distance={3.2}
+        attenuation={12}
+        anglePower={4}
+        opacity={0.4}
+      />
+      <object3D ref={target} position={[0, -0.7, 1]} />
+    </group>
+  );
+}
+
 export function ProceduralDrone() {
   return (
     <group>
@@ -250,7 +296,7 @@ export function ProceduralDrone() {
         />
       </mesh>
 
-      {/* gimbal camera under the nose */}
+      {/* gimbal camera under the nose — carries a sweeping search light */}
       <mesh position={[0, -0.16, 0.4]} castShadow>
         <sphereGeometry args={[0.14, 20, 20]} />
         <meshStandardMaterial color="#101216" metalness={0.5} roughness={0.2} />
@@ -258,6 +304,7 @@ export function ProceduralDrone() {
       <mesh position={[0, -0.16, 0.5]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.07, 0.07, 0.04, 20]} />
         <meshStandardMaterial color="#ffb27a" emissive="#ff6a1f" emissiveIntensity={0.7} toneMapped={false} />
+        {/* <SearchLight /> */}
       </mesh>
 
       {/* rotors */}

@@ -3,10 +3,49 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
+import { useLenis } from "lenis/react";
 
 import { cn } from "@/lib/utils";
 
-const Dialog = DialogPrimitive.Root;
+/**
+ * Lenis intercepts wheel/touch scroll globally, so its virtual page-scroll
+ * keeps moving underneath an open dialog even when Radix's own body-scroll
+ * lock is in effect. Pausing Lenis while open (and resuming on close/unmount)
+ * stops the page from scrolling — but Lenis's wheel handler calls
+ * `preventDefault()` unconditionally while stopped, which would also block
+ * the dialog's own scroll. `DialogContent` below carries `data-lenis-prevent`
+ * so Lenis skips it entirely and native `overflow-y-auto` scroll works there
+ * regardless of the stopped state.
+ */
+function Dialog({
+  onOpenChange,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Root>) {
+  const lenis = useLenis();
+
+  const handleOpenChange = React.useCallback(
+    (open: boolean) => {
+      if (open) {
+        lenis?.stop();
+      } else {
+        lenis?.start();
+      }
+      onOpenChange?.(open);
+    },
+    [lenis, onOpenChange],
+  );
+
+  React.useEffect(() => {
+    return () => {
+      // Safety net: don't leave page scroll stuck off if this instance
+      // unmounts (e.g. route change) while still open.
+      lenis?.start();
+    };
+  }, [lenis]);
+
+  return <DialogPrimitive.Root onOpenChange={handleOpenChange} {...props} />;
+}
+
 const DialogTrigger = DialogPrimitive.Trigger;
 const DialogClose = DialogPrimitive.Close;
 const DialogPortal = DialogPrimitive.Portal;
@@ -35,6 +74,7 @@ function DialogContent({
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Content
+        data-lenis-prevent
         className={cn(
           "fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2",
           "max-h-[88vh] overflow-y-auto rounded-2xl border border-white/12 bg-card/85 p-0 shadow-2xl backdrop-blur-2xl",
