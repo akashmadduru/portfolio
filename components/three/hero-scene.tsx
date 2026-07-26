@@ -89,37 +89,97 @@ function FitProbe() {
 }
 
 /* --------------------------------------------------------------------- */
-/*  Model rig — still on load; scroll drives Y-rotation only + tiny zoom. */
+/*  Model rig — idle hover-flight wobble + a slow, smooth hover-in tilt.  */
 /* --------------------------------------------------------------------- */
+/** Sideways drift/yaw-sway angular frequency, rad/s — unaffected by hover. */
+const IDLE_WOBBLE_SPEED = 1;
+/** Sideways drift amplitude, world units. */
+const IDLE_DRIFT_X = 0.16;
+/** Yaw sway amplitude while drifting, in radians. */
+const IDLE_YAW_AMPLITUDE = 0.14;
+/** Bank/roll tilt amplitude while drifting, in radians (like a real quad banking into a turn). */
+const IDLE_BANK_TILT = 0.09;
+/** How far the model eases toward the pointer while hovered, in radians. */
+const HOVER_TILT = 0.3;
+/** Scale pop while hovered, as a fraction of REST_SCALE. */
+const HOVER_SCALE_POP = 0.15;
+/** Per-frame ease rate (at 60fps) for the hover-in/out amount — low = slow, smooth. */
+const HOVER_EASE = 0.035;
+/** Per-frame ease rate for the pointer-tilt target itself, so it glides rather than snaps. */
+const POINTER_EASE = 0.045;
+
 function ModelRig({ scrollProgress }: SceneProps) {
   const outer = React.useRef<THREE.Group>(null);
   const inner = React.useRef<THREE.Group>(null);
   const url = useResolvedModelUrl();
   const endScale = REST_SCALE * (1 + SCROLL_END_SCALE_MULT / 100);
 
+  const hovered = React.useRef(false);
+  const hoverAmount = React.useRef(0);
+  const pointer = React.useRef({ x: 0, y: 0 });
+
+  const setHovered = React.useCallback((value: boolean) => {
+    hovered.current = value;
+    document.body.style.cursor = value ? "pointer" : "auto";
+  }, []);
+
+  React.useEffect(() => () => {
+    document.body.style.cursor = "auto";
+  }, []);
+
   useFrame((state) => {
     const p = clamp(scrollProgress.current, 0, 1);
     const t = state.clock.elapsedTime;
 
+    hoverAmount.current = lerp(hoverAmount.current, hovered.current ? 1 : 0, HOVER_EASE);
+    const hoverT = hoverAmount.current;
+    // Ease the raw pointer position too, so the tilt glides instead of snapping
+    // to wherever the cursor jumps.
+    pointer.current.x = lerp(pointer.current.x, state.pointer.x, POINTER_EASE);
+    pointer.current.y = lerp(pointer.current.y, state.pointer.y, POINTER_EASE);
+
+    // A single phase drives drift/yaw/bank together so the idle motion reads
+    // as one coherent "flying sideways" gesture — constant regardless of
+    // hover, so hovering never makes it wobble harder.
+    const phase = t * IDLE_WOBBLE_SPEED;
+    const driftX = Math.sin(phase) * IDLE_DRIFT_X;
+    const yaw = Math.sin(phase) * IDLE_YAW_AMPLITUDE;
+    const bank = Math.cos(phase) * IDLE_BANK_TILT; // leads the drift, like banking into the turn
+
     if (inner.current) {
-      inner.current.position.y = Math.sin(t * 0.5) * 0.012; // ~1–2px float, no rotation
+      inner.current.position.y = Math.sin(t * 0.5) * 0.012; // ~1–2px float
+      inner.current.position.x = driftX;
     }
 
     if (outer.current) {
-      // Scroll-driven, Y-AXIS ONLY. X and Z stay fixed at the resting angle.
-      const targetY = REST_ROTATION[1] + p * SCROLL_END_ROTATION[1];
-      outer.current.rotation.x = REST_ROTATION[0];
-      outer.current.rotation.y = lerp(outer.current.rotation.y, targetY, 0.1);
-      outer.current.rotation.z = REST_ROTATION[2];
+      // Idle sway + scroll delta on Y. Pointer-tilt eases in on X/Z while hovered.
+      const targetY = REST_ROTATION[1] + p * SCROLL_END_ROTATION[1] + yaw;
+      outer.current.rotation.y = lerp(outer.current.rotation.y, targetY, 0.12);
+      outer.current.rotation.x =
+        REST_ROTATION[0] + hoverT * -pointer.current.y * HOVER_TILT;
+      outer.current.rotation.z =
+        REST_ROTATION[2] + bank + hoverT * pointer.current.x * HOVER_TILT * 0.6;
 
-      const target = lerp(REST_SCALE, endScale, p);
-      outer.current.scale.setScalar(lerp(outer.current.scale.x, target, 0.1));
+      const target = lerp(REST_SCALE, endScale, p) * (1 + hoverT * HOVER_SCALE_POP);
+      outer.current.scale.setScalar(lerp(outer.current.scale.x, target, 0.06));
     }
   });
 
   return (
     <AutoFit fill={1.2}>
-      <group ref={outer} scale={REST_SCALE} rotation={REST_ROTATION}>
+      <group
+        ref={outer}
+        scale={REST_SCALE}
+        rotation={REST_ROTATION}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          setHovered(true);
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          setHovered(false);
+        }}
+      >
         <group ref={inner}>
           {/* drei <Center> centers the model's pivot at the origin via Box3, so
               the scroll Y-rotation spins around the model's true center. */}

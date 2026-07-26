@@ -31,18 +31,18 @@ export const profile = {
     { value: "4.5+", label: "Years of experience", suffix: "" },
     { value: "20", label: "Production systems shipped", suffix: "+" },
     { value: "40", label: "Avg. latency reduction", suffix: "%" },
-    { value: "4", label: "Domains: fintech, crypto, cloud, retail", suffix: "" },
+    { value: "4", label: "Domains: saas, retail, crypto, fintech", suffix: "" },
   ],
 
   /** Domains / focus chips used across About. */
   focus: [
-    "Enterprise Systems",
-    "Crypto & Blockchain",
-    "eCommerce",
+    "SaaS",
+    "Mobile Development",
     "Backend Engineering",
     "Frontend Architecture",
-    "Mobile Development",
     "Performance Optimization",
+    "Crypto & Blockchain",
+    "eCommerce",
     "System Design",
   ],
 } as const;

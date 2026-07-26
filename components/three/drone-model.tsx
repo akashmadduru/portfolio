@@ -1,6 +1,7 @@
 "use client";
 
 import { RoundedBox, useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 import * as React from "react";
 import * as THREE from "three";
 
@@ -35,7 +36,7 @@ export const SCROLL_END_ROTATION: [number, number, number] = [0, 0, 0];
  * Scroll-end scale as a PERCENTAGE zoom delta (negative = zoom out).
  * Consumed as `REST_SCALE * (1 + SCROLL_END_SCALE_MULT / 100)`.
  */
-export const SCROLL_END_SCALE_MULT = 1;
+export const SCROLL_END_SCALE_MULT = 18;
 
 /**
  * Resolve which candidate path actually exists (HEAD probe). Returns `null`
@@ -133,7 +134,7 @@ export class ModelErrorBoundary extends React.Component<
 /* --------------------------------------------------------------------- */
 /*  Procedural drone — clean futuristic quadcopter from primitives.       */
 /*  Anodized-aluminium body, matte polymer arms, amber signal accents.    */
-/*  Lightweight (~30 low-poly meshes), still (no auto motion).            */
+/*  Lightweight (~30 low-poly meshes); propellers spin continuously.      */
 /* --------------------------------------------------------------------- */
 const ARMS: { x: number; z: number }[] = [
   { x: 0.82, z: 0.6 },
@@ -142,9 +143,22 @@ const ARMS: { x: number; z: number }[] = [
   { x: -0.82, z: -0.6 },
 ];
 
+/** Propeller spin speed, rad/s. */
+const PROPELLER_SPIN_SPEED = 14;
+
 function Rotor({ x, z }: { x: number; z: number }) {
   const angle = Math.atan2(z, x);
   const length = Math.hypot(x, z);
+  // Diagonal arms counter-rotate, like a real quadcopter cancelling torque.
+  const spinDir = Math.sign(x * z) || 1;
+  const blades = React.useRef<THREE.Group>(null);
+
+  useFrame((_, delta) => {
+    if (blades.current) {
+      blades.current.rotation.y += spinDir * PROPELLER_SPIN_SPEED * delta;
+    }
+  });
+
   return (
     <group>
       {/* arm */}
@@ -174,28 +188,30 @@ function Rotor({ x, z }: { x: number; z: number }) {
           toneMapped={false}
         />
       </mesh>
-      {/* propeller — two crossed blades, static */}
+      {/* propeller — two crossed blades, spinning */}
       <group position={[x, 0.17, z]} rotation={[0, angle, 0]}>
-        <mesh castShadow>
-          <boxGeometry args={[0.7, 0.012, 0.07]} />
-          <meshStandardMaterial
-            color="#0e0f13"
-            metalness={0.3}
-            roughness={0.6}
-            transparent
-            opacity={0.9}
-          />
-        </mesh>
-        <mesh rotation={[0, Math.PI / 2, 0]} castShadow>
-          <boxGeometry args={[0.7, 0.012, 0.07]} />
-          <meshStandardMaterial
-            color="#0e0f13"
-            metalness={0.3}
-            roughness={0.6}
-            transparent
-            opacity={0.9}
-          />
-        </mesh>
+        <group ref={blades}>
+          <mesh castShadow>
+            <boxGeometry args={[0.7, 0.012, 0.07]} />
+            <meshStandardMaterial
+              color="#0e0f13"
+              metalness={0.3}
+              roughness={0.6}
+              transparent
+              opacity={0.9}
+            />
+          </mesh>
+          <mesh rotation={[0, Math.PI / 2, 0]} castShadow>
+            <boxGeometry args={[0.7, 0.012, 0.07]} />
+            <meshStandardMaterial
+              color="#0e0f13"
+              metalness={0.3}
+              roughness={0.6}
+              transparent
+              opacity={0.9}
+            />
+          </mesh>
+        </group>
       </group>
     </group>
   );
