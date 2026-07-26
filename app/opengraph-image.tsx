@@ -60,7 +60,7 @@ export default function OpengraphImage() {
               color: "transparent",
             }}
           >
-            Software Engineer · Cloud-Native Developer
+            Software Engineer 
           </div>
         </div>
 

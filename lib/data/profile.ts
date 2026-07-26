@@ -7,11 +7,10 @@ export const profile = {
   roles: [
     "Software Engineer",
     "Full Stack Engineer",
-    "Cloud-Native Developer",
     "Backend Architect",
   ],
   tagline:
-    "I build resilient, cloud-native systems and interfaces that feel effortless — from enterprise platforms to crypto and eCommerce.",
+    "I build resilient, backend systems and interfaces that feel effortless — from enterprise platforms to crypto and eCommerce.",
   // Path to your resume in /public. Replace public/resume.pdf with your real file.
   resumeUrl: "/akash_madduru_resume.pdf",
   location: contact.location,
@@ -40,7 +39,6 @@ export const profile = {
     "Enterprise Systems",
     "Crypto & Blockchain",
     "eCommerce",
-    "Cloud-Native Development",
     "Backend Engineering",
     "Frontend Architecture",
     "Mobile Development",
