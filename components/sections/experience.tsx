@@ -33,7 +33,7 @@ function ExperienceCard({ exp }: { exp: ExperienceItem }) {
 
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{exp.summary}</p>
 
-        <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+        <ul className="mt-4 grid gap-2">
           {exp.highlights.map((point) => (
             <li key={point} className="flex gap-2.5 text-sm leading-relaxed text-foreground/70">
               <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary/70" />

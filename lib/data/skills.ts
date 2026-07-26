@@ -4,8 +4,10 @@ import {
   Cloud,
   Code2,
   Database,
+  FlaskConical,
   GitBranch,
   Layers,
+  Radio,
   Smartphone,
   type LucideIcon,
 } from "lucide-react";
@@ -51,7 +53,7 @@ export const skillCategories: SkillCategory[] = [
     icon: Cloud,
     accent: "aurora-4",
     blurb: "Cloud-native from day one.",
-    skills: ["AWS", "GCP", "Serverless", "Lambda", "S3", "CloudFront", "Vercel"],
+    skills: ["AWS", "Azure", "GCP", "Serverless", "Lambda", "S3", "CloudFront", "Vercel"],
   },
   {
     id: "devops",
@@ -59,7 +61,18 @@ export const skillCategories: SkillCategory[] = [
     icon: GitBranch,
     accent: "aurora-1",
     blurb: "Ship safely, ship often.",
-    skills: ["Docker", "Kubernetes", "CI/CD", "GitHub Actions", "Terraform", "Nginx", "Linux"],
+    skills: [
+      "Docker",
+      "Kubernetes",
+      "CI/CD",
+      "GitHub Actions",
+      "Terraform",
+      "Nginx",
+      "Linux",
+      "Git",
+      "Jira",
+      "Postman",
+    ],
   },
   {
     id: "mobile",
@@ -91,6 +104,22 @@ export const skillCategories: SkillCategory[] = [
     accent: "aurora-4",
     blurb: "The right store for the right access pattern.",
     skills: ["PostgreSQL", "MySQL", "MongoDB", "Redis", "DynamoDB", "Prisma"],
+  },
+  {
+    id: "testing",
+    title: "Testing",
+    icon: FlaskConical,
+    accent: "aurora-1",
+    blurb: "Confidence before it ships.",
+    skills: ["Vitest", "JUnit", "Mockito"],
+  },
+  {
+    id: "messaging",
+    title: "Messaging & Caching",
+    icon: Radio,
+    accent: "aurora-3",
+    blurb: "Decoupled, resilient data flow.",
+    skills: ["Apache Kafka", "Redis Cache"],
   },
 ];
 

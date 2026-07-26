@@ -34,7 +34,7 @@ export const projects: Project[] = [
     id: "airport-card-management",
     title: "Airport Card Management System",
     category: "Enterprise · Infrastructure",
-    year: "2023",
+    year: "2024",
     tagline:
       "Secure access-card lifecycle platform for the Western Sydney Airport program.",
     overview:
@@ -60,7 +60,7 @@ export const projects: Project[] = [
       { value: "RBAC", label: "Fine-grained access control" },
       { value: "24/7", label: "Production availability" },
     ],
-    timeline: "8 months · 2023",
+    timeline: "8 months · 2024",
     impact:
       "Delivered compliant, fully auditable access control for a national-infrastructure airport program — trusted for round-the-clock operations.",
     gradient: ["#c9962f", "#6f7bd6"],
@@ -72,7 +72,7 @@ export const projects: Project[] = [
     id: "enterprise-auth-platform",
     title: "Enterprise Authentication Platform",
     category: "Backend · Security",
-    year: "2023",
+    year: "2024",
     tagline: "Centralized identity, SSO, and authorization for enterprise services.",
     overview:
       "A reusable authentication & authorization layer that standardizes login, token issuance, and role management across a suite of enterprise applications — removing bespoke, error-prone auth code from every service.",
@@ -89,7 +89,7 @@ export const projects: Project[] = [
       { value: "<5ms", label: "Token verification" },
       { value: "SSO", label: "Across all services" },
     ],
-    timeline: "6 months · 2023",
+    timeline: "6 months · 2025",
     impact:
       "Standardized identity across the enterprise, cutting auth-related defects and letting new services ship secure login in days, not weeks.",
     gradient: ["#b98a37", "#7c5cff"],
@@ -101,7 +101,7 @@ export const projects: Project[] = [
     id: "custom-ecommerce",
     title: "Custom eCommerce Platform",
     category: "Full Stack · Retail",
-    year: "2022",
+    year: "2024",
     tagline: "Bespoke storefront with real payment flows and performance-first UX.",
     overview:
       "An end-to-end eCommerce platform tailored to a client's catalog and fulfillment workflow — product discovery, cart, secure checkout, and order management — engineered to convert and to load fast on any device.",
@@ -186,7 +186,7 @@ export const projects: Project[] = [
     id: "microservices-platform",
     title: "Microservices Platform",
     category: "Architecture · Cloud-Native",
-    year: "2023",
+    year: "2021",
     tagline: "Event-driven services with observability and safe, frequent deploys.",
     overview:
       "A cloud-native platform decomposing a monolith into independently deployable, event-driven services — improving scalability, team autonomy, and deploy frequency without sacrificing reliability.",

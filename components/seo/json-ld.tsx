@@ -1,7 +1,7 @@
 import { profile } from "@/lib/data/profile";
 import { contact } from "@/lib/data/socials";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://akashmadduru.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://akashmadduru.in";
 
 /** Person + ProfilePage structured data for rich search results. */
 export function JsonLd() {
@@ -11,7 +11,7 @@ export function JsonLd() {
     mainEntity: {
       "@type": "Person",
       name: profile.name,
-      jobTitle: "Software Engineer",
+      jobTitle: profile.roles[0],
       description: profile.tagline,
       email: `mailto:${contact.email}`,
       url: siteUrl,

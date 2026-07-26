@@ -28,9 +28,9 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://akashmadduru.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://akashmadduru.in";
 const description =
-  "Akash Madduru — Software Engineer & Cloud-Native Developer with 4.5+ years building enterprise systems, crypto DApps, and high-performance eCommerce. Full-stack, backend architecture, and system design.";
+  "Akash Madduru — Software Engineer & Cloud-Native Developer with 5+ years building enterprise systems, crypto DApps, and high-performance eCommerce. Full-stack, backend architecture, and system design.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

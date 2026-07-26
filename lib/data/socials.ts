@@ -16,8 +16,8 @@ export interface SocialLink {
  */
 export const contact = {
   email: "akashmadduru@gmail.com",
-  phone: "+91 9494535327", // TODO: replace with real phone
-  phoneHref: "tel:+919494535327", // TODO: replace with real phone
+  phone: "+91 9494535327",
+  phoneHref: "tel:+919494535327",
   location: "Hyderabad, India",
   // TODO: replace with your real profile URLs
   githubUrl: "https://github.com/akashmadduru",
