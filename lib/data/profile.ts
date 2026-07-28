@@ -18,7 +18,7 @@ export const profile = {
   /** Narrative intro (About section) — story, not a bio. */
   narrative: [
     "For the past 5+ years I've lived at the seam where reliability meets craft — designing and building scalable web and mobile products across enterprise, eCommerce, AI, blockchain, and fintech domains.",
-    "I've shipped production financial software at FactSet, led secure backend systems for a national-infrastructure airport program, and modernized legacy systems for performance gains of up to 60% — while championing Test-Driven Development and mentoring engineers along the way.",
+    "I've worked on production financial software at FactSet, led secure backend systems for a national-infrastructure airport program, and modernized legacy systems for performance gains of up to 60% — while championing Test-Driven Development and mentoring engineers along the way.",
     "My motto is simple — engineer systems that are correct, observable, and fast, then wrap them in experiences people actually enjoy using.",
   ],
 

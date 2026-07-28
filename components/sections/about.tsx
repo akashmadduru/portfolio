@@ -1,8 +1,9 @@
 "use client";
 
-import { useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import * as React from "react";
 
+import { Avatar3D } from "@/components/sections/avatar-3d";
 import { SectionHeading } from "@/components/layout/section-heading";
 import { Reveal } from "@/components/motion/reveal";
 import { Spotlight } from "@/components/motion/spotlight";
@@ -47,15 +48,35 @@ export function About() {
   return (
     <section id="about" className="relative scroll-mt-24 py-24 sm:py-32">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <SectionHeading
-          eyebrow="About"
-          title={
-            <>
-              Engineering systems that are{" "}
-              <span className="text-gradient">correct, fast, and felt.</span>
-            </>
-          }
-        />
+        <div className="flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-12">
+          {/* Section Heading */}
+          <div className="flex-1 min-w-0">
+            <SectionHeading
+              eyebrow="About"
+              title={
+                <>
+                  Engineering systems that are{" "}
+                  <span className="text-gradient">correct, fast, and felt.</span>
+                </>
+              }
+            />
+          </div>
+
+          {/* Avatar - next to heading */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true, amount: 0.5 }}
+            className="hidden lg:block flex-shrink-0"
+          >
+            <Spotlight className="rounded-full">
+              <div className="panel rounded-full p-1">
+                <Avatar3D />
+              </div>
+            </Spotlight>
+          </motion.div>
+        </div>
 
         <div className="mt-14 grid gap-12 lg:grid-cols-[1.4fr_1fr]">
           <div className="space-y-5">

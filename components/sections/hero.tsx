@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { profile } from "@/lib/data/profile";
 import { socials } from "@/lib/data/socials";
 import { usePrefersReducedMotion } from "@/lib/hooks/use-prefers-reduced-motion";
+import { Avatar3D } from "./avatar-3d";
 
 const HeroCanvas = dynamic(() => import("@/components/three/hero-canvas"), {
   ssr: false,
@@ -174,6 +175,7 @@ export function Hero() {
               </div>
             )}
           </div>
+
 
           {/* corner registration ticks */}
           <Tick className="pointer-events-none absolute left-0 top-0 hidden md:block" />
